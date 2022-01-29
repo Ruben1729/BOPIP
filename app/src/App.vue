@@ -50,6 +50,18 @@ export default {
     name: 'App',
     components: {
         HelloWorld,
+    },
+    async created() {
+        await this.$store.dispatch('getDeviceInfo');
+        this.$store.state.isMobileLayout = this.getLayoutWidth() <= 600;
+        this.$store.state.isSmallMobileLayout = this.getLayoutWidth() <= 360;
+
+        // Resize callback
+        window.addEventListener('resize', async () => {
+            await this.$store.dispatch('getDeviceInfo');
+            this.$store.state.isMobileLayout = this.getLayoutWidth() <= 600;
+            this.$store.state.isSmallMobileLayout = this.getLayoutWidth() <= 360;
+        });
     }
 };
 </script>
