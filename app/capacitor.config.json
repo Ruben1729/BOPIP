@@ -1,0 +1,6 @@
+{
+    "appId": "com.bopip.app",
+    "appName": "Bopip",
+    "webDir": "dist",
+    "bundledWebRuntime": false
+}
