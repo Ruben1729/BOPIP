@@ -1,13 +1,9 @@
-import Network from '@/helpers/Network.js';
+// import Network from '@/helpers/Network.js';
 
 export default {
     state: {
         items: [],
     },
-    mutations: {
-
-    },
-    actions: {
-
-    }
+    mutations: {},
+    actions: {}
 };
