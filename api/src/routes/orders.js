@@ -41,10 +41,16 @@ router.get('/:id', (req, res) => {
         .catch(() => res.json([]));
 });
 
-router.post('/:order_id/schedule-pickup', checkRequiredPOST('store_id', 'start_time'), async (req, res) => {
+router.post('/schedule-pickup', checkRequiredPOST('order_id', 'store_id', 'start_time'), async (req, res) => {
 
-    const { order_id } = req.params;
-    const { store_id, start_time } = req.body;
+    const { order_id, store_id, start_time } = req.body;
+
+    // Check order already scheduled
+    const existingOrderPickup = await db('bopip.order_pickup')
+        .where('order_id', order_id)
+        .first();
+    if (existingOrderPickup)
+        return res.status(HTTP_BAD_REQUEST).send('order_already_scheduled');
 
     // Check order exists
     let order;
@@ -92,8 +98,8 @@ router.post('/:order_id/schedule-pickup', checkRequiredPOST('store_id', 'start_t
     store.employees.forEach(e => e.availability = [openingInterval]);
     employeeBookings.forEach(b => {
         const bookingInterval = Interval.fromDateTimes(
-            DateTime.fromISO(b.start_time).minus({ minutes: 5 }),
-            DateTime.fromISO(b.end_time).plus({ minutes: 5 })
+            DateTime.fromJSDate(b.start_time),
+            DateTime.fromJSDate(b.end_time)
         );
         const employee = store.employees.find(e => e.id === b.employee_id);
         employee.availability = employee.availability.map(a => a.difference(bookingInterval)).reduce((acc, value) => [...acc, ...value], []);
@@ -111,15 +117,9 @@ router.post('/:order_id/schedule-pickup', checkRequiredPOST('store_id', 'start_t
     let locations = store.pickupLocations.filter(l => isValidParcelSize(order.parcelSize, l.parcelSize));
     const conflictingPickups = await db('bopip.order_pickup')
         .where('store_id', store_id)
-        .whereIn('pickup_location_id', locations)
-        .where(function() {
-            this.whereBetween('start_time', [start.toJSDate(), end.toJSDate()])
-            .orWhereBetween('end_time', [start.toJSDate(), end.toJSDate()])
-            .orWhere(function() {
-                this.where('start_time', '<', start.toJSDate())
-                    .where('end_time', '>', end.toJSDate());
-            });
-        });
+        .whereIn('pickup_location_id', locations.map(l => l.id))
+        .where('start_time', '<=', end.toJSDate())
+        .where('end_time', '>=', start.toJSDate());
     locations = locations.filter(l => !conflictingPickups.find(p => p.pickup_location_id === l.id));
     if (locations.length <= 0)
         return res.status(HTTP_BAD_REQUEST).send('no_available_locations');
