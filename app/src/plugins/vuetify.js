@@ -9,12 +9,8 @@ export default new Vuetify({
             customProperties: true
         },
         themes: {
-            light: {
-
-            },
-            dark: {
-
-            }
+            light: {},
+            dark: {}
         }
     }
 });

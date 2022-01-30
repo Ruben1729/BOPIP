@@ -4,8 +4,8 @@
 
 <script>
 export default {
-  name: "item-info"
-}
+    name: 'market'
+};
 </script>
 
 <style scoped>
