@@ -30,7 +30,7 @@ const mixins = {
                 this.$router.push(url);
         },
         getLayoutWidth() {
-            return window.outerWidth === 0 ? window.innerWidth : window.outerWidth;
+            return window.innerWidth ;
         }
     }
 };
