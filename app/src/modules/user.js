@@ -4,7 +4,7 @@ import { App } from '@capacitor/app';
 export default {
     state: {
         email: null,
-        device: null
+        device: null,
     },
     mutations: {
         setEmail(state, email) {
@@ -18,7 +18,6 @@ export default {
     actions: {
         async logout({ commit }) {
             commit('setEmail', null);
-
         },
 
         async getDeviceInfo({ commit }) {

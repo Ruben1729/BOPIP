@@ -1,5 +1,5 @@
 <template>
-    <v-container class="grey lighten-5" fill-height>
+    <v-container fill-height>
         <v-row>
             <v-col
                 v-if="!isMobileLayout"

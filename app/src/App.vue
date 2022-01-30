@@ -1,9 +1,11 @@
 <template>
     <v-app>
         <v-main>
-            <router-view>
+            <keep-alive>
+                <router-view>
 
-            </router-view>
+                </router-view>
+            </keep-alive>
         </v-main>
     </v-app>
 </template>

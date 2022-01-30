@@ -18,7 +18,10 @@ const mixins = {
             return this.$store.state.layout.isSmallMobileLayout;
         },
         user() {
-            return this.$store.state.user.account;
+            return this.$store.state.user;
+        },
+        email() {
+            return this.$store.state.user.email;
         },
         device() {
             return this.$store.state.user.device;
